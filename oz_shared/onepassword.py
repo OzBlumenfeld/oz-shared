@@ -1,20 +1,8 @@
 import logging
 import os
 import subprocess
-from typing import Annotated, Any
-
-from pydantic import BeforeValidator
 
 _logger = logging.getLogger(__name__)
-
-
-def coerce_empty_to_none(v: Any) -> Any:
-    if isinstance(v, dict) and not v:
-        return None
-    return v
-
-
-OptStr = Annotated[str | None, BeforeValidator(coerce_empty_to_none)]
 
 
 def load_op_secrets() -> None:
