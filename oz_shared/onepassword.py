@@ -7,7 +7,7 @@ import onepassword
 _logger = logging.getLogger(__name__)
 
 
-def load_op_secrets() -> None:
+def load_op_secrets_deprecated() -> None:
     if os.getenv("ENV", "") != "local":
         return
 
@@ -49,7 +49,7 @@ def load_op_secrets() -> None:
     _logger.info("Loaded secrets successfully")
 
 
-async def load_op_secrets_sdk(vault: str = "Dev") -> None:
+async def load_op_secrets(vault: str = "Dev") -> None:
     """Load secrets via the 1Password SDK using a service account token.
 
     Requires OP_SERVICE_ACCOUNT_TOKEN env var. The token should be scoped
