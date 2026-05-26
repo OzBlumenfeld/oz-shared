@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -212,21 +213,46 @@ class S3StorageClient:
 
 
 def make_minio_client(
-    bucket: str,
+    bucket: str | None = None,
     *,
-    host: str = "localhost",
-    port: int = 9000,
-    access_key: str = "minioadmin",
-    secret_key: str = "minioadmin",
+    endpoint_url: str | None = None,
+    access_key: str | None = None,
+    secret_key: str | None = None,
     prefix: str = "",
-    secure: bool = False,
 ) -> S3StorageClient:
-    scheme = "https" if secure else "http"
+    """Create an S3StorageClient configured for MinIO.
+
+    Reads connection config from environment variables; keyword arguments
+    override their corresponding env var:
+
+      MINIO_ENDPOINT   – full URL, e.g. http://minio:9000
+      MINIO_ACCESS_KEY – access key (username)
+      MINIO_SECRET_KEY – secret key (password)
+      MINIO_BUCKET     – target bucket name
+    """
+    resolved_bucket = bucket or os.environ.get("MINIO_BUCKET")
+    resolved_endpoint = endpoint_url or os.environ.get("MINIO_ENDPOINT")
+    resolved_access_key = access_key or os.environ.get("MINIO_ACCESS_KEY")
+    resolved_secret_key = secret_key or os.environ.get("MINIO_SECRET_KEY")
+
+    missing = [
+        name
+        for name, value in (
+            ("bucket / MINIO_BUCKET", resolved_bucket),
+            ("endpoint_url / MINIO_ENDPOINT", resolved_endpoint),
+            ("access_key / MINIO_ACCESS_KEY", resolved_access_key),
+            ("secret_key / MINIO_SECRET_KEY", resolved_secret_key),
+        )
+        if not value
+    ]
+    if missing:
+        raise ValueError(f"Missing required MinIO config: {', '.join(missing)}")
+
     return S3StorageClient(
-        bucket=bucket,
-        endpoint_url=f"{scheme}://{host}:{port}",
-        access_key_id=access_key,
-        secret_access_key=secret_key,
+        bucket=resolved_bucket,  # type: ignore[arg-type]
+        endpoint_url=resolved_endpoint,  # type: ignore[arg-type]
+        access_key_id=resolved_access_key,  # type: ignore[arg-type]
+        secret_access_key=resolved_secret_key,  # type: ignore[arg-type]
         prefix=prefix,
     )
 
