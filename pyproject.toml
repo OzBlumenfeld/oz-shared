@@ -13,19 +13,8 @@ postgres = [
     "sqlalchemy[asyncio]>=2.0",
     "asyncpg>=0.29",
 ]
-storage-s3 = [
-    "aioboto3>=13.0",
-]
-storage-gcs = [
-    "google-cloud-storage>=3.0",
-]
-storage-azure = [
-    "azure-storage-blob>=12.0",
-]
 storage = [
     "aioboto3>=13.0",
-    "google-cloud-storage>=3.0",
-    "azure-storage-blob>=12.0",
 ]
 
 [build-system]

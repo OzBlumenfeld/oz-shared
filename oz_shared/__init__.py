@@ -12,21 +12,17 @@ except ImportError:
 
 try:
     from oz_shared.storage import (
-        AzureBlobStorageClient,
-        GCSStorageClient,
-        LocalStorageClient,
+        ObjectInfo,
         S3StorageClient,
-        StorageClient,
         UploadResult,
+        make_minio_client,
     )
 
     __all__ += [
-        "AzureBlobStorageClient",
-        "GCSStorageClient",
-        "LocalStorageClient",
+        "ObjectInfo",
         "S3StorageClient",
-        "StorageClient",
         "UploadResult",
+        "make_minio_client",
     ]
 except ImportError:
     pass
